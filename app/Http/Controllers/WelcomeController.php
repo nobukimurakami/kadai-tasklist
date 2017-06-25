@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\tasks;
-
-class TasklistsController extends Controller
+class WelcomeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,11 +16,20 @@ class TasklistsController extends Controller
      */
     public function index()
     {
-        $tasklists = tasks::all();
-        
-        return view('tasklists.index', [
-            'tasklists' => $tasklists,
-        ]);
+        //
+        $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+            
+        }
+        //dd($data);
+        return view('welcome', $data);
     }
 
     /**
@@ -32,11 +39,7 @@ class TasklistsController extends Controller
      */
     public function create()
     {
-        $tasklist = new tasks;
-
-        return view('tasklists.create', [
-            'tasklist' => $tasklist,
-        ]);
+        //
     }
 
     /**
@@ -47,20 +50,7 @@ class TasklistsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'status' => 'required',
-        ]);
-        
-        //$tasklist = new tasks;
-        $request->user()->tasks()->create([ 'status' => $request->status, 'content' => $request->content, ]);
-        /*$tasklist->status = $request->status;
-        $tasklist->content = $request->content;
-        $tasklist->save();*/
-
-        return redirect('/');
-        /*return view('tasklist.index',[
-            'tasklist' => $tasklist,
-        ]);*/
+        //
     }
 
     /**
@@ -71,11 +61,7 @@ class TasklistsController extends Controller
      */
     public function show($id)
     {
-        $tasklist = tasks::find($id);
-
-        return view('tasklists.show', [
-            'tasklist' => $tasklist,
-        ]);
+        //
     }
 
     /**
@@ -86,11 +72,7 @@ class TasklistsController extends Controller
      */
     public function edit($id)
     {
-        $tasklist = tasks::find($id);
-
-        return view('tasklists.edit', [
-            'tasklist' => $tasklist,
-        ]);
+        //
     }
 
     /**
@@ -102,16 +84,7 @@ class TasklistsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'status' => 'required',
-        ]);
-        
-        $tasklist = tasks::find($id);
-        $tasklist->status = $request->status;
-        $tasklist->content = $request->content;
-        $tasklist->save();
-
-        return redirect('/');
+        //
     }
 
     /**
@@ -122,9 +95,6 @@ class TasklistsController extends Controller
      */
     public function destroy($id)
     {
-        $tasklist = tasks::find($id);
-        $tasklist->delete();
-
-        return redirect('/');
+        //
     }
 }
